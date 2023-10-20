@@ -40,7 +40,7 @@ function SignUp() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Username
@@ -80,7 +80,7 @@ function SignUp() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="password"
+                  htmlFor="confirm-password"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Confirm Password
@@ -88,9 +88,9 @@ function SignUp() {
               </div>
               <div className="mt-2">
                 <input
-                  id="password"
-                  name="password"
-                  type="password"
+                  id="confirm-password"
+                  name="confirm-password"
+                  type="confirm-password"
                   autoComplete="current-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -100,7 +100,7 @@ function SignUp() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  for="street-address"
+                  htmlFor="license-number"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   License Number
@@ -112,7 +112,7 @@ function SignUp() {
                   name="license-number"
                   id="license-number"
                   required
-                  autocomplete="license-number"
+                  autoComplete="license-number"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
