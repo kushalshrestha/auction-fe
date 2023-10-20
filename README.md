@@ -54,8 +54,8 @@ To get started with this project, follow these steps:
 ### Available Scripts
 In the project directory, you can run the following scripts:
 
-`npm run dev`: Start the development server.
-`npm run build`: Build the project for production.
-`npm run lint`: Check your code for linting errors.
-`npm run preview`: Serve the production build locally.
-`npm run format`: Format your code using Prettier.
+* `npm run dev`: Start the development server.
+* `npm run build`: Build the project for production.
+* `npm run lint`: Check your code for linting errors.
+* `npm run preview`: Serve the production build locally.
+* `npm run format`: Format your code using Prettier.
