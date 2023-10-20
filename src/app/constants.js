@@ -4,7 +4,7 @@ export const USER_ROLES = {
     CUSTOMER: 'CUSTOMER',
   };
 
-export const PROPERTY_STATUS = {
+export const PRODUCT_STATUS = {
     AVAILABLE: 'AVAILABLE', 
     SOLD: 'SOLD', 
 };
