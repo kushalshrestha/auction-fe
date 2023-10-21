@@ -59,3 +59,4 @@ In the project directory, you can run the following scripts:
 * `npm run lint`: Check your code for linting errors.
 * `npm run preview`: Serve the production build locally.
 * `npm run format`: Format your code using Prettier.
+* `npm run json:server`: Start mock json server.
