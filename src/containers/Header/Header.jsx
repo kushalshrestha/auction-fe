@@ -9,7 +9,8 @@ const navigation = [
   { name: 'Products in Auction', href: '/products', current: false },
   { name: 'Product Detail', href: '/product-detail', current: false },
   { name: 'History', href: '/history', current: false },
-  { name: 'Sell Products', href: '/sell-products', current: false },
+  // { name: 'Sell Products', href: '/sell-products', current: false },
+  { name: 'Add Product', href: '/product/add', current: false },
   { name: 'Sign In', href: '/sign-in', current: false },
   { name: 'Sign Up', href: '/sign-up', current: false },
 ];
@@ -20,7 +21,7 @@ function classNames(...classes) {
 
 export default function Head() {
   return (
-    <>
+    <div className="bg-light">
       <Disclosure as="nav" className="bg-gray-800">
         {({ open }) => (
           <>
@@ -181,6 +182,6 @@ export default function Head() {
           </>
         )}
       </Disclosure>
-    </>
+    </div>
   );
 }

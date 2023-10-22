@@ -57,6 +57,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input {
+  padding-left: 10px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: theme('colors.dark') !important;
