@@ -2,15 +2,10 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { notifyError } from '../helpers/notification';
 
-const dotenv = require('dotenv');
-dotenv.config();
-
-const API_BASE_URL = process.env.API_BASE_URL; 
-
 const cookies = new Cookies();
 
 const httpClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 httpClient.interceptors.request.use(
@@ -47,7 +42,13 @@ httpClient.interceptors.response.use(
   }
 );
 
-export const httpGet = (props) => httpClient.request({ method: 'get', ...props });
-export const httpPost = (props) => httpClient.request({ method: 'post', ...props });
+export const httpGet = (props) => {
+  console.log(props);
+  httpClient.request({ method: 'get', ...props });
+};
+export const httpPost = (props) => {
+  console.log(props);
+  httpClient.request({ method: 'post', ...props });
+};
 export const httpPut = (props) => httpClient.request({ method: 'put', ...props });
 export const httpDelete = (props) => httpClient.request({ method: 'delete', ...props });

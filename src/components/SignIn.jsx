@@ -1,4 +1,48 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { notifyError, notifySuccess } from '../helpers/notification';
+import { httpPost, httpGet } from '../api';
+import Cookies from 'universal-cookie';
+
 function SignIn() {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const navigate = useNavigate();
+
+  const handleSignInInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSignInSubmit = async (e) => {
+    console.log('submitted data', formData);
+    e.preventDefault();
+    // You can handle sign-in logic here, e.g., make an API request.
+    try {
+      await httpPost({
+        url: '/authenticate/signin',
+        data: formData,
+      });
+      handleSuccessfulLogin();
+    } catch (err) {
+      notifyError(`Error while signing in: ${err}`);
+    }
+  };
+
+  const handleSuccessfulLogin = (data) => {
+    const cookies = new Cookies();
+    cookies.set('ISLOGGEDIN', true);
+    cookies.set('ROLE', 'customer');
+    notifySuccess('Successfully signed in');
+    navigate('/', { replace: true });
+  };
+
   return (
     <>
       <h1 className="text-3xl font-bold underline">Secure Online Auction System</h1>
@@ -14,7 +58,7 @@ function SignIn() {
           </h2>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleSignInSubmit}>
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -31,6 +75,8 @@ function SignIn() {
                   type="email"
                   autoComplete="email"
                   required
+                  onChange={handleSignInInputChange}
+                  value={formData.email}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -56,6 +102,8 @@ function SignIn() {
                   type="password"
                   autoComplete="current-password"
                   required
+                  onChange={handleSignInInputChange}
+                  value={formData.password}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
