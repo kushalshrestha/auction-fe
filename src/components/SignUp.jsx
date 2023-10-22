@@ -32,7 +32,6 @@ function SignUp() {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     try {
       await httpPost({
         url: '/register',
