@@ -6,7 +6,8 @@ import './Header.css';
 
 const navigation = [
   { name: 'Home', href: '/', current: true },
-  { name: 'View Products', href: '/products', current: false },
+  { name: 'Products in Auction', href: '/products', current: false },
+  { name: 'Product Detail', href: '/product-detail', current: false },
   { name: 'History', href: '/history', current: false },
   { name: 'Sell Products', href: '/sell-products', current: false },
   { name: 'Sign In', href: '/sign-in', current: false },
