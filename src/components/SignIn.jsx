@@ -25,20 +25,30 @@ function SignIn() {
     e.preventDefault();
     // You can handle sign-in logic here, e.g., make an API request.
     try {
-      await httpPost({
-        url: '/authenticate/signin',
+      let authResponse = await httpPost({
+        url: '/auth/login',
         data: formData,
       });
-      handleSuccessfulLogin();
+      console.log("Sign in response: ", authResponse)
+      handleSuccessfulLogin(authResponse);
     } catch (err) {
+      console.log(err);
       notifyError(`Error while signing in: ${err}`);
     }
   };
 
-  const handleSuccessfulLogin = (data) => {
+  const handleSuccessfulLogin = (authResponse) => {
+    console.log("data.....",authResponse)
+   
     const cookies = new Cookies();
     cookies.set('ISLOGGEDIN', true);
-    cookies.set('ROLE', 'customer');
+    if(authResponse) {
+      let credentials = authResponse.data;
+      cookies.set('ROLE', credentials.role);
+      cookies.set('ACCESS_TOKEN', credentials.accessToken);
+     
+    }
+    // cookies.set('ROLE', 'customer');
     notifySuccess('Successfully signed in');
     navigate('/', { replace: true });
   };
