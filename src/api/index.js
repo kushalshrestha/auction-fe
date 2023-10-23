@@ -7,7 +7,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 console.log("API Base URl:" , API_BASE_URL);
 
 const cookies = new Cookies();
-
+console.log("test");
 const httpClient = axios.create({
   baseURL: `http://localhost:8080/`,
 });
