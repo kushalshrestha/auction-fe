@@ -1,15 +1,18 @@
+//Touched By Pratima
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { notifyError, notifySuccess } from '../helpers/notification';
 import { httpPost, httpGet } from '../api';
+import axios from 'axios';
 
 function SignUp() {
   const [formData, setFormData] = useState({
     email: '',
-    username: '',
+    // username: '',
     password: '',
     confirmPassword: '',
-    isRole: 'customer',
+    roles: 'CUSTOMER',
   });
 
   const navigate = useNavigate();
@@ -20,7 +23,7 @@ function SignUp() {
       value = e.target.id;
       setFormData({
         ...formData,
-        isRole: value,
+        roles: value,
       });
     } else {
       setFormData({
@@ -32,15 +35,28 @@ function SignUp() {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
+    if (formData.password !== formData.confirmPassword) {
+      notifyError('Password and Confirm Password do not match');
+      return;
+    }
+
+    // copy of formData without the "confirmPassword" property
+    const { confirmPassword, ...formDataWithoutConfirmPassword } = formData;
+    console.log(formDataWithoutConfirmPassword);
+
     try {
-      await httpPost({
-        url: '/register',
-        data: formData,
+      const res = await httpPost({
+        url: '/users',
+        data: formDataWithoutConfirmPassword,
       });
-      notifySuccess('Successfully signed up. Now please login using your credential');
+      if (res.data.message == 'User Created Successfully') {
+        notifySuccess(res.data.message);
+      }
       navigate('/sign-in', { replace: true });
     } catch (err) {
-      notifyError(`Error while signing up ${err}`);
+      notifyError('Email Already Exist');
     }
   };
 
@@ -60,6 +76,7 @@ function SignUp() {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSignupSubmit}>
+            {/* Email div start */}
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -82,7 +99,9 @@ function SignUp() {
                 />
               </div>
             </div>
-            <div>
+            {/* Email Div end */}
+
+            {/* <div>
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="username"
@@ -103,7 +122,9 @@ function SignUp() {
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
-            </div>
+            </div> */}
+
+            {/* Password Div start */}
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -126,6 +147,9 @@ function SignUp() {
                 />
               </div>
             </div>
+            {/* Password Div end */}
+
+            {/* Confirm Password Div start */}
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -148,10 +172,13 @@ function SignUp() {
                 />
               </div>
             </div>
+            {/* Confirm Password Div end */}
+
+            {/* License Num Div start */}
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="license-number"
+                  htmlFor="licenseNumber"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   License Number
@@ -160,16 +187,18 @@ function SignUp() {
               <div className="mt-2">
                 <input
                   type="text"
-                  name="license-number"
-                  id="license-number"
+                  name="licenseNumber"
+                  id="licenseNumber"
                   required
-                  autoComplete="license-number"
+                  autoComplete="licenseNumber"
                   onChange={handleSignupInputChange}
                   checked={formData.isOwner}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
+            {/* License Num Div end */}
+            {/* Roles Div start */}
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
@@ -180,11 +209,11 @@ function SignUp() {
                 <label className="text-gray-700 font-medium flex items-center">
                   <input
                     type="radio"
-                    id="customer"
-                    name="isRole"
+                    id="CUSTOMER"
+                    name="roles"
                     className="radio"
                     onChange={handleSignupInputChange}
-                    checked={formData.isRole === 'customer'}
+                    checked={formData.roles === 'CUSTOMER'}
                   />
                   <label
                     htmlFor="customer"
@@ -196,11 +225,11 @@ function SignUp() {
                 <label className="text-gray-700 font-medium flex items-center">
                   <input
                     type="radio"
-                    id="seller"
-                    name="isRole"
+                    id="SELLER"
+                    name="roles"
                     className="radio"
                     onChange={handleSignupInputChange}
-                    checked={formData.isRole === 'seller'}
+                    checked={formData.roles === 'SELLER'}
                   />
                   <label
                     htmlFor="seller"
@@ -211,6 +240,7 @@ function SignUp() {
                 </label>
               </div>
             </div>
+            {/* Roles Div end */}
 
             <div className="border-b border-gray-900/10 pb-1">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"></div>
