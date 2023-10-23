@@ -1,18 +1,22 @@
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { notifyError } from '../helpers/notification';
+import { ACCESS_TOKEN } from '../app/constants';
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+console.log(API_BASE_URL);
 
 const cookies = new Cookies();
 
 const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
 });
 
 httpClient.interceptors.request.use(
   (config) => {
     const token = cookies.get(ACCESS_TOKEN);
 
-    if (token && !config.headers.Authorization) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -42,13 +46,10 @@ httpClient.interceptors.response.use(
   }
 );
 
-export const httpGet = (props) => {
-  console.log(props);
-  httpClient.request({ method: 'get', ...props });
-};
-export const httpPost = (props) => {
-  console.log(props);
-  httpClient.request({ method: 'post', ...props });
-};
+export const httpGet = (props) => httpClient.request({ method: 'get', ...props });
+
+export const httpPost = (props) => httpClient.request({ method: 'post', ...props });
+
 export const httpPut = (props) => httpClient.request({ method: 'put', ...props });
+
 export const httpDelete = (props) => httpClient.request({ method: 'delete', ...props });

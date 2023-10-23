@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { notifyError, notifySuccess } from '../helpers/notification';
 import { httpPost, httpGet } from '../api';
+import axios from 'axios';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ function SignUp() {
     // username: '',
     password: '',
     confirmPassword: '',
-    roles: 'customer',
+    roles: 'CUSTOMER',
   });
 
   const navigate = useNavigate();
@@ -46,15 +47,16 @@ function SignUp() {
     console.log(formDataWithoutConfirmPassword);
 
     try {
-      await httpPost({
+      const res = await httpPost({
         url: '/users',
         data: formDataWithoutConfirmPassword,
       });
-
-      // notifySuccess('Successfully signed up. Now please login using your credential');
-      // navigate('/sign-in', { replace: true });
+      if (res.data.message == 'User Created Successfully') {
+        notifySuccess(res.data.message);
+      }
+      navigate('/sign-in', { replace: true });
     } catch (err) {
-      // notifyError(`Error while signing up ${err}`);
+      notifyError('Email Already Exist');
     }
   };
 
@@ -207,11 +209,11 @@ function SignUp() {
                 <label className="text-gray-700 font-medium flex items-center">
                   <input
                     type="radio"
-                    id="customer"
+                    id="CUSTOMER"
                     name="roles"
                     className="radio"
                     onChange={handleSignupInputChange}
-                    checked={formData.roles === 'customer'}
+                    checked={formData.roles === 'CUSTOMER'}
                   />
                   <label
                     htmlFor="customer"
@@ -223,11 +225,11 @@ function SignUp() {
                 <label className="text-gray-700 font-medium flex items-center">
                   <input
                     type="radio"
-                    id="seller"
+                    id="SELLER"
                     name="roles"
                     className="radio"
                     onChange={handleSignupInputChange}
-                    checked={formData.roles === 'seller'}
+                    checked={formData.roles === 'SELLER'}
                   />
                   <label
                     htmlFor="seller"
