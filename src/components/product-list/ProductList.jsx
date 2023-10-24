@@ -62,6 +62,7 @@ const products = [
     seller: 'Samuel',
   },
 ];
+
 function ProductList() {
   return (
     <div className="bg-white z-0">
