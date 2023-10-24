@@ -42,16 +42,14 @@ function SignUp() {
       return;
     }
 
-    // copy of formData without the "confirmPassword" property
     const { confirmPassword, ...formDataWithoutConfirmPassword } = formData;
-    console.log(formDataWithoutConfirmPassword);
 
     try {
       const res = await httpPost({
         url: '/users',
         data: formDataWithoutConfirmPassword,
       });
-      if (res.data.message == 'User Created Successfully') {
+      if (res.data.message === 'User Created Successfully') {
         notifySuccess(res.data.message);
       }
       navigate('/sign-in', { replace: true });
