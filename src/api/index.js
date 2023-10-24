@@ -47,7 +47,10 @@ httpClient.interceptors.response.use(
 
 export const httpGet = (props) => httpClient.request({ method: 'get', ...props });
 
-export const httpPost = (props) => httpClient.request({ method: 'post', ...props });
+export const httpPost = (props) => {
+  // console.log('here')
+  httpClient.request({ method: 'post', ...props })
+};
 
 export const httpPut = (props) => httpClient.request({ method: 'put', ...props });
 
