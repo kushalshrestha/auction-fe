@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import axios from 'axios';
 import { httpPost, httpGet } from '../../api';
 import { Link } from 'react-router-dom';
 
@@ -48,7 +47,7 @@ function ProductAddEdit() {
 
       notifySuccess('product created successfully');
 
-      navigate('/products', { replace: true });
+      // navigate('/products', { replace: true });
     } catch (err) {
       console.log('error', err);
       notifyError(`${err}`);

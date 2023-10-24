@@ -3,8 +3,6 @@ import PageRoutes from './PageRoutes';
 import Header from './Header/Header';
 
 function Dashboard() {
-  const [curentUser] = useState({});
-
   return (
     <div>
       <div className="fixed top-0 left-0 right-0 z-10">

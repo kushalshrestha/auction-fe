@@ -1,18 +1,25 @@
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ROLES } from './../../app/constants';
+import { useSelector, useDispatch } from 'react-redux';
+import { signOut } from './../../store/slices/auth';
+import { notifySuccess } from './../../helpers/notification';
+import { useNavigate } from 'react-router';
 
 import './Header.css';
 
 const navigation = [
-  { name: 'Home', href: '/', current: true },
-  { name: 'Products in Auction', href: '/products', current: false },
-  { name: 'Product Detail', href: '/product-detail', current: false },
-  { name: 'History', href: '/history', current: false },
+  { name: 'Home', href: '/', current: true, visibility: ['SELLER', 'CUSTOMER', 'ALL'] },
+  {
+    name: 'Products in Auction',
+    href: '/products',
+    current: false,
+    visibility: ['SELLER', 'CUSTOMER'],
+  },
+  { name: 'History', href: '/history', current: false, visibility: ['SELLER', 'CUSTOMER'] },
   // { name: 'Sell Products', href: '/sell-products', current: false },
-  { name: 'Add Product', href: '/product/add', current: false },
-  { name: 'Sign In', href: '/sign-in', current: false },
-  { name: 'Sign Up', href: '/sign-up', current: false },
+  { name: 'Add Product', href: '/product/add', current: false, visibility: ['SELLER'] },
 ];
 
 function classNames(...classes) {
@@ -20,6 +27,34 @@ function classNames(...classes) {
 }
 
 export default function Head() {
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user || {};
+  const isCustomer = ROLES.CUSTOMER === user.roles;
+  const isSeller = ROLES.SELLER === user.roles;
+
+  console.log('auth', auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const filteredNavigation = navigation.filter((item) => {
+    console.log(user.roles);
+    if (
+      (item.visibility && item.visibility.includes(user.roles)) ||
+      item.visibility.includes('ALL')
+    ) {
+      return true;
+    }
+    return false;
+  });
+  console.log('filteredNavigation', filteredNavigation);
+
+  const handleSignOut = () => {
+    dispatch(signOut());
+    notifySuccess('Successfully signed out!!');
+    navigate('/');
+  };
+
   return (
     <div className="bg-light">
       <Disclosure as="nav" className="bg-gray-800">
@@ -42,7 +77,7 @@ export default function Head() {
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
-                      {navigation.map((item) => (
+                      {filteredNavigation.map((item) => (
                         <a
                           key={item.name}
                           href={item.href}
@@ -61,47 +96,43 @@ export default function Head() {
                   </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  <button
-                    type="button"
-                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                     <div className="flex space-x-4">
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <div>
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">Open user menu</span>
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
-                          />
-                        </div>
-                      </Menu.Button>
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <div>
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">Open user menu</span>
-                          <a key="sign-in" href="/sign-in" className="btn-sign">
-                            Sign In
-                          </a>
-                        </div>
-                      </Menu.Button>
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <div>
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">Open user menu</span>
-                          <a key="sign-up" href="/sign-up" className="btn-sign">
-                            Sign Up
-                          </a>
-                        </div>
-                      </Menu.Button>
+                      {(isCustomer || isSeller) && (
+                        <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 avatar-p">
+                          <div>
+                            <span className="absolute -inset-1.5" />
+                            <span className="sr-only">Open user menu</span>
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                              alt=""
+                            />
+                          </div>
+                        </Menu.Button>
+                      )}
+
+                      {!isCustomer && !isSeller && (
+                        <button className="">
+                          <div className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <span className="absolute -inset-1.5" />
+                            <a key="sign-in" href="/sign-in" className="btn-sign">
+                              Sign In
+                            </a>
+                          </div>
+                        </button>
+                      )}
+                      {!isCustomer && !isSeller && (
+                        <button>
+                          <div className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <span className="absolute -inset-1.5" />
+                            <a key="sign-up" href="/sign-up" className="btn-sign">
+                              Sign Up
+                            </a>
+                          </div>
+                        </button>
+                      )}
                     </div>
                     <Transition
                       as={Fragment}
@@ -116,33 +147,7 @@ export default function Head() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
-                              )}
-                            >
-                              Your Profile
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
-                              )}
-                            >
-                              Settings
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="/"
+                              onClick={handleSignOut}
                               className={classNames(
                                 active ? 'bg-gray-100' : '',
                                 'block px-4 py-2 text-sm text-gray-700'
