@@ -56,7 +56,7 @@ function SignUp() {
       }
       navigate('/sign-in', { replace: true });
     } catch (err) {
-      notifyError('Email Already Exist');
+      notifyError(`Error while signing up ${err.data.message}`);
     }
   };
 
