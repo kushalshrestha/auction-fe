@@ -26,7 +26,7 @@ function SignIn() {
     // You can handle sign-in logic here, e.g., make an API request.
     try {
       await httpPost({
-        url: '/authenticate/signin',
+        url: '/auth/login',
         data: formData,
       });
       handleSuccessfulLogin();

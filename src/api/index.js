@@ -9,7 +9,7 @@ console.log(API_BASE_URL);
 const cookies = new Cookies();
 
 const httpClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: 'http://localhost:8080',
 });
 
 httpClient.interceptors.request.use(

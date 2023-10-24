@@ -1,34 +1,69 @@
-const product = {
-  name: "Samuel's Oil Painting",
-  startingPrice: '$50',
-  deposit: '$5',
-  href: '#',
-  breadcrumbs: [{ id: 1, name: 'Products', href: '/products' }],
-  images: [
-    {
-      src: 'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-      alt: 'Samuel Oil Painting.',
-    },
-  ],
-  description:
-    'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-};
+import React, { useEffect, useState } from 'react';
+import { httpGet } from '../../api';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+//   name: "Samuel's Oil Painting",
+//   startingPrice: '$50',
+//   deposit: '$5',
+//   href: '#',
+//   breadcrumbs: [{ id: 1, name: 'Products', href: '/products' }],
+//   images: [
+//     {
+//       src: 'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
+//       alt: 'Samuel Oil Painting.',
+//     },
+//   ],
+//   description:
+//     'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
+// };
 
 function ProductDetail() {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isMakeDeposit, setMakeDeposit] = useState(false);
+  const [price, setPrice] = useState(0);
+
+  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
+    isMakeDeposit ? '' : 'pointer-events-none opacity-50'
+  }`;
+
+  const handleMakeDepositClick = () => {
+    setMakeDeposit(true);
+  };
+
+  const handlePriceClick = (updateValue) => {
+    // Update the price with the provided value
+    setPrice(price + updateValue);
+  };
+
+  useEffect(() => {
+    // Replace 'https://api.example.com/products/1' with the actual URL to fetch a specific product.
+    const apiUrl = '/products/3'; 
+
+    httpGet({ url: apiUrl }) // Use httpGet to make the GET request
+      .then(response => {
+        setProduct(response.data);
+        setPrice(response.data.startingPrice);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <>
-      <div className="bg-white">
+    <div>
+      {loading ? (
+        <p>Loading product details...</p>
+      ) : product ? (
+        <div className="bg-white">
         <div className="pt-6">
           <nav aria-label="Breadcrumb">
             <ol
               role="list"
               className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8"
             >
-              {product.breadcrumbs.map((breadcrumb) => (
+              {/* {product.breadcrumbs.map((breadcrumb) => (
                 <li key={breadcrumb.id}>
                   <div className="flex items-center">
                     <a href={breadcrumb.href} className="mr-2 text-sm font-medium text-gray-900">
@@ -46,10 +81,10 @@ function ProductDetail() {
                     </svg>
                   </div>
                 </li>
-              ))}
+              ))} */}
               <li className="text-sm">
                 <a
-                  href={product.href}
+                  href='#'
                   aria-current="page"
                   className="font-medium text-gray-500 hover:text-gray-600"
                 >
@@ -64,8 +99,8 @@ function ProductDetail() {
             <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block flex justify-center items-center">
               {' '}
               <img
-                src={product.images[0].src}
-                alt={product.images[0].alt}
+                src='https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg'
+                alt={product.name}
                 className="h-full w-full object-cover object-center"
               />
             </div>
@@ -89,6 +124,7 @@ function ProductDetail() {
               <button
                 type="button"
                 className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                onClick={handleMakeDepositClick}
               >
                 Make Deposit
               </button>
@@ -101,6 +137,8 @@ function ProductDetail() {
               <div className="mt-2">
                 <input
                   type="number"
+                  value={price} // Bind the input value to the 'price' state
+                  onChange={(e) => setPrice(Number(e.target.value))}
                   name="bid-amount"
                   id="bid-amount"
                   placeholder="Insert amount to bid"
@@ -111,33 +149,41 @@ function ProductDetail() {
               <div className="mt-2 flex items-center gap-x-3">
                 <button
                   type="button"
-                  className="pointer-events-none opacity-50 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 "
+                  className={btnPriceClassName}
+                  onClick={() => handlePriceClick(10)}
                 >
                   + $10
                 </button>
 
                 <button
                   type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  className={btnPriceClassName}
+                  onClick={() => handlePriceClick(10)}
                 >
                   + $10
                 </button>
                 <button
                   type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  className={btnPriceClassName}
+                  onClick={() => handlePriceClick(50)}
                 >
                   + $50
                 </button>
                 <button
                   type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
+                  className={btnPriceClassName}
+                  onClick={() => handlePriceClick(100)}
+                  >            
                   + $100
                 </button>
                 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"></div>
               </div>
+              <div className="py-3">
+                <p><b>Biding Due Date : {new Date(product.bidDueDate).toLocaleDateString()}</b></p>
+                <p><b>Biding Payment Due Date : {new Date(product.biddingPaymentDueDate).toLocaleDateString()}</b></p>
+              </div>
             </div>
-
+           
             <div className="py-1 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6 text-left">
               <div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
@@ -150,7 +196,10 @@ function ProductDetail() {
           </div>
         </div>
       </div>
-    </>
+      ) : (
+        <p>Product not found</p>
+      )}
+    </div>
   );
 }
 
