@@ -56,7 +56,7 @@ function SignUp() {
       }
       navigate('/sign-in', { replace: true });
     } catch (err) {
-      notifyError(`Error while signing up ${err}`);
+      notifyError(`Error while signing up ${err.data.message}`);
     }
   };
 
