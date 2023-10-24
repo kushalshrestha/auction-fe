@@ -15,6 +15,7 @@ function ProductAddEdit() {
     bidDueDate: '',
     biddingPaymentDueDate: '',
     released: false,
+    sellerID: 1,
   });
 
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ function ProductAddEdit() {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log('here', formData);
 
     try {
       const res = await httpPost({
@@ -49,6 +50,7 @@ function ProductAddEdit() {
 
       navigate('/products', { replace: true });
     } catch (err) {
+      console.log('error', err);
       notifyError(`${err}`);
     }
   };
