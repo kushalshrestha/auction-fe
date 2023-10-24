@@ -6,7 +6,6 @@ import { ACCESS_TOKEN } from '../app/constants';
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const cookies = new Cookies();
-console.log("test");
 const httpClient = axios.create({
   baseURL: `http://localhost:8080/`,
 });
