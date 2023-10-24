@@ -4,12 +4,10 @@ import { notifyError } from '../helpers/notification';
 import { ACCESS_TOKEN } from '../app/constants';
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-console.log(API_BASE_URL);
 
 const cookies = new Cookies();
-
 const httpClient = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: `http://localhost:8080/`,
 });
 
 httpClient.interceptors.request.use(
@@ -48,7 +46,7 @@ httpClient.interceptors.response.use(
 
 export const httpGet = (props) => httpClient.request({ method: 'get', ...props });
 
-export const httpPost = (props) => httpClient.request({ method: 'post', ...props });
+export const httpPost = (props) => httpClient.request({ method: 'post', ...props })
 
 export const httpPut = (props) => httpClient.request({ method: 'put', ...props });
 
