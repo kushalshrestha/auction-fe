@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { httpGet, httpPost } from '../../api';
 import { notifySuccess, notifyError } from './../../helpers/notification';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { ROLES } from './../../app/constants';
 
 function ProductDetail() {
   const [product, setProduct] = useState(null);
@@ -10,18 +12,26 @@ function ProductDetail() {
   const [price, setPrice] = useState(0);
   const { productID } = useParams();
 
-  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
-    isMakeDeposit ? '' : 'pointer-events-none opacity-50'
-  }`;
+  const auth = useSelector((state) => state.auth);
+
+  const user = auth.user || {};
+  console.log(user);
+  const isCustomer = ROLES.CUSTOMER === user.roles;
+  const customerID = isCustomer ? auth.user.sub.split(',')[0] : null;
+  console.log(auth.user.sub);
+  console.log(customerID);
+
+  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${isMakeDeposit ? '' : 'pointer-events-none opacity-50'
+    }`;
 
   const handleMakeDepositClick = () => {
     setMakeDeposit(true);
     handleDepositSubmit();
   };
 
-  const sampleData = {
-    customerId: 2,
-    productId: 1,
+  const depositData = {
+    customerId: customerID,
+    productId: productID,
     depositAmount: 12.0,
   };
 
@@ -29,7 +39,7 @@ function ProductDetail() {
     try {
       const res = await httpPost({
         url: '/deposits',
-        data: sampleData,
+        data: depositData,
       });
 
       notifySuccess('Deposit has been made, now you can start bidding');
@@ -39,9 +49,28 @@ function ProductDetail() {
     }
   };
 
-  const handlePriceClick = (updateValue) => {
+  const handlePriceClick = async (updateValue) => {
     // Update the price with the provided value
     setPrice(price + updateValue);
+
+    const bidData = {
+      customerId: customerID,
+      productId: productID,
+      newBidAmount: price + updateValue
+    };
+
+    // Post method to create a bid
+    try {
+      const res = await httpPost({
+        url: '/bids',
+        data: bidData,
+      });
+
+      notifySuccess('Bid created successfully')
+    } catch (err) {
+      console.log('error', err);
+      notifyError(`${err}`)
+    }
   };
 
   useEffect(() => {
