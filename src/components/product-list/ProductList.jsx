@@ -1,69 +1,85 @@
 import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { httpGet } from './../../api';
 
-const products = [
-  {
-    id: 1,
-    name: "Samuel's Oil Painting",
-    href: '/product-detail',
-    imageSrc:
-      'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-    imageAlt: 'Oil Painting',
-    description:
-      'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-    bidDueDate: '29th Jan 2024',
-    biddingPaymentDueDate: '2nd Feb 2024',
-    release: 'No',
-    startingPrice: '$50',
-    seller: 'Samuel',
-  },
-  {
-    id: 2,
-    name: "Samuel's Oil Painting",
-    href: '/',
-    imageSrc:
-      'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-    imageAlt: 'Oil Painting',
-    description:
-      'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-    bidDueDate: '29th Jan 2024',
-    biddingPaymentDueDate: '2nd Feb 2024',
-    release: 'No',
-    startingPrice: '$50',
-    seller: 'Samuel',
-  },
-  {
-    id: 3,
-    name: "Samuel's Oil Painting",
-    href: '/',
-    imageSrc:
-      'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-    imageAlt: 'Oil Painting',
-    description:
-      'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-    bidDueDate: '29th Jan 2024',
-    biddingPaymentDueDate: '2nd Feb 2024',
-    release: 'No',
-    startingPrice: '$50',
-    seller: 'Samuel',
-  },
-  {
-    id: 4,
-    name: "Samuel's Oil Painting",
-    href: '/',
-    imageSrc:
-      'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-    imageAlt: 'Oil Painting',
-    description:
-      'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-    bidDueDate: '29th Jan 2024',
-    biddingPaymentDueDate: '2nd Feb 2024',
-    release: 'No',
-    startingPrice: '$50',
-    seller: 'Samuel',
-  },
-];
+// const products = [
+//   {
+//     id: 1,
+//     name: "Samuel's Oil Painting",
+//     href: '/product-detail',
+//     imageSrc:
+//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
+//     imageAlt: 'Oil Painting',
+//     description:
+//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
+//     bidDueDate: '29th Jan 2024',
+//     biddingPaymentDueDate: '2nd Feb 2024',
+//     release: 'No',
+//     startingPrice: '$50',
+//     seller: 'Samuel',
+//   },
+//   {
+//     id: 2,
+//     name: "Samuel's Oil Painting",
+//     href: '/',
+//     imageSrc:
+//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
+//     imageAlt: 'Oil Painting',
+//     description:
+//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
+//     bidDueDate: '29th Jan 2024',
+//     biddingPaymentDueDate: '2nd Feb 2024',
+//     release: 'No',
+//     startingPrice: '$50',
+//     seller: 'Samuel',
+//   },
+//   {
+//     id: 3,
+//     name: "Samuel's Oil Painting",
+//     href: '/',
+//     imageSrc:
+//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
+//     imageAlt: 'Oil Painting',
+//     description:
+//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
+//     bidDueDate: '29th Jan 2024',
+//     biddingPaymentDueDate: '2nd Feb 2024',
+//     release: 'No',
+//     startingPrice: '$50',
+//     seller: 'Samuel',
+//   },
+//   {
+//     id: 4,
+//     name: "Samuel's Oil Painting",
+//     href: '/',
+//     imageSrc:
+//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
+//     imageAlt: 'Oil Painting',
+//     description:
+//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
+//     bidDueDate: '29th Jan 2024',
+//     biddingPaymentDueDate: '2nd Feb 2024',
+//     release: 'No',
+//     startingPrice: '$50',
+//     seller: 'Samuel',
+//   },
+// ];
 
-function ProductList() {
+const ProductList = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    const res = await httpGet({
+      url: '/products',
+    });
+    setProducts(res.data);
+    console.log(products);
+  };
+
   return (
     <div className="bg-white z-0">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -77,14 +93,15 @@ function ProductList() {
         </button>
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
-            <div key={product.id}>
-              <Link to={product.href}>
+            <div key={product.productID}>
+              {/* <Link to={product.href}> */}
+              <Link to={`/product-detail/${product.productID}`}>
                 <span className="sr-only">Your Company</span>
                 <div className="group relative">
                   <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                     <img
-                      src={product.imageSrc}
-                      alt={product.imageAlt}
+                      src="https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg"
+                      alt={product.name}
                       className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                     />
                   </div>
@@ -112,7 +129,7 @@ function ProductList() {
                       </h3>
                       <h3 className="text-sm text-gray-700">
                         <span aria-hidden="true" className="absolute inset-0" />
-                        Seller: {product.seller}
+                        Seller: {product.seller.sellerID}
                       </h3>
                     </div>
                   </div>
@@ -124,5 +141,6 @@ function ProductList() {
       </div>
     </div>
   );
-}
+};
+
 export default ProductList;

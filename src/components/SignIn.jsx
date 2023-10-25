@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { notifyError, notifySuccess } from '../helpers/notification';
 import { httpPost, httpGet } from '../api';
 import Cookies from 'universal-cookie';
+import jwtDecode from 'jwt-decode';
+import { ACCESS_TOKEN } from '../app/constants';
+import { signIn } from '../store/slices/auth';
 
 function SignIn() {
   const [formData, setFormData] = useState({
@@ -11,6 +15,7 @@ function SignIn() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSignInInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,21 +30,30 @@ function SignIn() {
     e.preventDefault();
     // You can handle sign-in logic here, e.g., make an API request.
     try {
-      await httpPost({
-        url: '/authenticate/signin',
+      let authResponse = await httpPost({
+        url: '/auth/login',
         data: formData,
       });
-      handleSuccessfulLogin();
+      console.log('Sign in response: ', authResponse);
+      handleSuccessfulLogin(authResponse.data);
     } catch (err) {
+      console.log(err);
       notifyError(`Error while signing in: ${err}`);
     }
   };
 
   const handleSuccessfulLogin = (data) => {
     const cookies = new Cookies();
-    cookies.set('ISLOGGEDIN', true);
-    cookies.set('ROLE', 'customer');
-    notifySuccess('Successfully signed in');
+    console.log('data', data);
+    const { accessToken } = data || {};
+    const jwt = jwtDecode(accessToken);
+    console.log('jwt', jwt);
+    cookies.set(ACCESS_TOKEN, accessToken, {
+      path: '/',
+      expires: new Date(jwt.exp * 1000),
+    });
+    dispatch(signIn({ ...jwt, email: jwt.sub }));
+    notifySuccess('Successfully signed in!!');
     navigate('/', { replace: true });
   };
 

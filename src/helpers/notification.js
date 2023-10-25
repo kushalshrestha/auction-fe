@@ -1,7 +1,7 @@
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 
-export function notifyError(msg, duration = 2000) {
+export function notifyError(msg, duration = 5000) {
   const notyf = new Notyf({
     types: [
       {
@@ -21,7 +21,7 @@ export function notifyError(msg, duration = 2000) {
   });
 }
 
-export function notifyWarn(msg, duration = 2000) {
+export function notifyWarn(msg, duration = 5000) {
   const notyf = new Notyf({
     types: [
       {
@@ -42,7 +42,7 @@ export function notifyWarn(msg, duration = 2000) {
   });
 }
 
-export function notifySuccess(msg, duration = 2000) {
+export function notifySuccess(msg, duration = 5000) {
   const notyf = new Notyf({
     types: [
       {
