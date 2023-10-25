@@ -5,10 +5,12 @@ import { notifySuccess, notifyError } from '../../helpers/notification';
 import { ROLES } from '../../app/constants';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { useParams } from 'react-router-dom';
 
 function BidHistory() {
     const [open, setOpen] = useState(true);
     const [bids, setBids] = useState([]);
+    const { productID } = useParams();
 
     const auth = useSelector((state) => state.auth);
     const user = auth.user || {};
@@ -21,7 +23,7 @@ function BidHistory() {
 
     useEffect(() => {
         try {
-            const apiUrl = "/bids/by-product?productId=${productId}"
+            const apiUrl = `/bids/by-product?productId=${productID}`
             httpGet({ url: apiUrl })
                 .then((response) => {
                     setBids(response.data.bids)
