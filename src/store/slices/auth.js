@@ -14,8 +14,10 @@ export const authSlice = createSlice({
   },
   reducers: {
     signIn: (state, action) => {
-      console.log('ACTIONNNNN', action);
-      state.user = action.payload;
+      const { ...userData } = action.payload;
+      state.user = {
+        ...userData,
+      };
     },
     signOut: (state) => {
       cookies.remove(ACCESS_TOKEN);

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { httpGet, httpPost } from '../../api';
 import { notifySuccess, notifyError } from './../../helpers/notification';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { ROLES } from './../../app/constants';
+import Cookies from 'universal-cookie';
 
 function ProductDetail() {
   const [product, setProduct] = useState(null);
@@ -9,27 +12,30 @@ function ProductDetail() {
   const [isMakeDeposit, setMakeDeposit] = useState(false);
   const [price, setPrice] = useState(0);
   const { productID } = useParams();
+  const [depositData, setDepositData] = useState(null);
 
-  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
-    isMakeDeposit ? '' : 'pointer-events-none opacity-50'
-  }`;
+  const auth = useSelector((state) => state.auth);
+  const cookies = new Cookies();
+  const customerSellerID = cookies.get('CUSTOMERSELLERID');
+
+  const user = auth.user || {};
+  const isCustomer = ROLES.CUSTOMER === user.roles;
+  // const customerID = isCustomer ? auth.user.sub.split(',')[0] : null;
+
+  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${isMakeDeposit ? '' : 'pointer-events-none opacity-50'
+    }`;
 
   const handleMakeDepositClick = () => {
     setMakeDeposit(true);
     handleDepositSubmit();
   };
 
-  const sampleData = {
-    customerId: 2,
-    productId: 1,
-    depositAmount: 12.0,
-  };
 
   const handleDepositSubmit = async (e) => {
     try {
       const res = await httpPost({
         url: '/deposits',
-        data: sampleData,
+        data: depositData,
       });
 
       notifySuccess('Deposit has been made, now you can start bidding');
@@ -39,18 +45,42 @@ function ProductDetail() {
     }
   };
 
-  const handlePriceClick = (updateValue) => {
-    // Update the price with the provided value
+  const handlePriceClick = async (updateValue) => {
     setPrice(price + updateValue);
+
+    const bidData = {
+      customerId: customerSellerID,
+      productId: productID,
+      newBidAmount: price + updateValue
+    };
+
+    // Post method to create a bid
+    try {
+      const res = await httpPost({
+        url: '/bids',
+        data: bidData,
+      });
+
+      notifySuccess('Bid created successfully')
+    } catch (err) {
+      console.log('error', err);
+      notifyError(`${err}`)
+    }
   };
 
   useEffect(() => {
     const apiUrl = `/products/${productID}`;
 
-    httpGet({ url: apiUrl }) // Use httpGet to make the GET request
+    httpGet({ url: apiUrl }) 
       .then((response) => {
         setProduct(response.data);
         setPrice(response.data.startingPrice);
+        const updatedDepositData = {
+          customerId: customerSellerID,
+          productId: productID,
+          depositAmount: response.data.deposit, 
+        };
+        setDepositData(updatedDepositData);
         setLoading(false);
       })
       .catch((error) => {
@@ -122,12 +152,12 @@ function ProductDetail() {
                   </button>
                 )}
                 {isMakeDeposit && (
-                  <a
-                    href="#"
+                  <Link
+                    to={`/bid-history/${productID}`}
                     className="ml-1 text-sm font-medium text-indigo-600 hover:text-indigo-500"
                   >
                     View Bidding History
-                  </a>
+                  </Link>
                 )}
                 {isMakeDeposit && (
                   <div className="mt-2">
