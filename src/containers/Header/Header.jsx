@@ -36,7 +36,6 @@ export default function Head() {
   const navigate = useNavigate();
 
   const filteredNavigation = navigation.filter((item) => {
-    console.log(user.roles);
     if (
       (item.visibility && item.visibility.includes(user.roles)) ||
       item.visibility.includes('ALL')
@@ -45,7 +44,6 @@ export default function Head() {
     }
     return false;
   });
-  console.log('filteredNavigation', filteredNavigation);
 
   const handleSignOut = () => {
     dispatch(signOut());
