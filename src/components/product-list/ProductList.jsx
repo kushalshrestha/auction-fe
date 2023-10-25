@@ -95,9 +95,8 @@ const ProductList = () => {
                     </div>
                   </div>
                 </div>
-                <Link to="/product/add">
+                <Link to={`/product/edit/${product.productID}`}>
                   <button>
-
                     Edit Product
                   </button>
                 </Link>
