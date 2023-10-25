@@ -1,13 +1,14 @@
-import React, { useEffect, useState, Fragment, useRef } from 'react';
-import { httpGet, httpPost } from '../../api';
+import React, { useEffect, useState, Fragment } from 'react';
+import { httpGet } from '../../api';
 import { useSelector } from 'react-redux';
-import { notifySuccess, notifyError } from './../../helpers/notification';
-import { ROLES } from './../../app/constants';
+import { notifySuccess, notifyError } from '../../helpers/notification';
+import { ROLES } from '../../app/constants';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 function BidHistory() {
     const [open, setOpen] = useState(true);
+    const [bids, setBids] = useState([]);
 
     const auth = useSelector((state) => state.auth);
     const user = auth.user || {};
@@ -18,26 +19,25 @@ function BidHistory() {
     console.log('user.role', user.roles);
     console.log('isCustomer', isCustomer);
 
-    const handleBidHistory = async (e) => {
+    useEffect(() => {
         try {
-            const res = await httpGet({
-                url: '/bids',
-                id: ,
-                newBid:
+            const apiUrl = "/bids/by-product?productId=${productId}"
+            httpGet({ url: apiUrl })
+                .then((response) => {
+                    setBids(response.data.bids)
+                    notifySuccess('Successfully displaying Bids');
+                })
 
-            });
-
-            notifySuccess('Successfully diaplaying Bids');
         } catch (err) {
             console.log('error', err);
             notifyError(`${err}`);
         }
-    };
+    }, [])
 
 
     return (
         <Transition.Root show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
+            <Dialog as="div" className="relative z-10" onClose={setOpen}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -73,14 +73,14 @@ function BidHistory() {
                                             <thead>
                                                 <tr>
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer ID</th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">New Bid</th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bid Amount</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
-                                                {bids.map((bid, index) => (
-                                                    <tr key={index}>
-                                                        <td className="px-6 py-4 whitespace-nowrap">{res.id}</td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">{res.newBid}</td>
+                                                {bids.map((bid) => (
+                                                    <tr key={bid.bidId}>
+                                                        <td className="px-6 py-4 whitespace-nowrap">{bid.CustomerId}</td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">{bid.bidAmount}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
