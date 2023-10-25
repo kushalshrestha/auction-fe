@@ -32,8 +32,6 @@ export default function Head() {
   const isCustomer = ROLES.CUSTOMER === user.roles;
   const isSeller = ROLES.SELLER === user.roles;
 
-  console.log('auth', auth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -114,24 +112,21 @@ export default function Head() {
                       )}
 
                       {!isCustomer && !isSeller && (
-                        <button className="">
-                          <div className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <a href="/sign-in" className="btn-sign">
+                          <button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="absolute -inset-1.5" />
-                            <a key="sign-in" href="/sign-in" className="btn-sign">
-                              Sign In
-                            </a>
-                          </div>
-                        </button>
+                            Sign In
+                          </button>
+                        </a>
                       )}
+
                       {!isCustomer && !isSeller && (
-                        <button>
-                          <div className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <a href="/sign-up" className="btn-sign">
+                          <button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="absolute -inset-1.5" />
-                            <a key="sign-up" href="/sign-up" className="btn-sign">
-                              Sign Up
-                            </a>
-                          </div>
-                        </button>
+                            Sign Up
+                          </button>
+                        </a>
                       )}
                     </div>
                     <Transition
