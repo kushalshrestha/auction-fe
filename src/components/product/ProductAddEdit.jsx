@@ -22,7 +22,6 @@ function ProductAddEdit() {
   const handleProductInputChange = (e) => {
     let { value } = e.target;
     if (e.target.type === 'submit') {
-      console.log(value);
       setFormData({
         ...formData,
         released: value === 'publish' ? true : false,
@@ -37,7 +36,6 @@ function ProductAddEdit() {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    console.log('here', formData);
 
     try {
       const res = await httpPost({
@@ -47,9 +45,8 @@ function ProductAddEdit() {
 
       notifySuccess('product created successfully');
 
-      // navigate('/products', { replace: true });
+      navigate('/products', { replace: true });
     } catch (err) {
-      console.log('error', err);
       notifyError(`${err}`);
     }
   };

@@ -21,6 +21,7 @@ export const authSlice = createSlice({
     },
     signOut: (state) => {
       cookies.remove(ACCESS_TOKEN);
+      cookies.remove('CUSTOMERSELLERID');
       state.user = {};
     },
   },

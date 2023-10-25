@@ -32,10 +32,8 @@ function SignIn() {
         url: '/auth/login',
         data: formData,
       });
-      console.log('Sign in response: ', authResponse);
       handleSuccessfulLogin(authResponse.data);
     } catch (err) {
-      console.log(err);
       notifyError(`Error while signing in: ${err}`);
     }
   };

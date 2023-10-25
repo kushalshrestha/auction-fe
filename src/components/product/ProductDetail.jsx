@@ -11,8 +11,10 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [isMakeDeposit, setMakeDeposit] = useState(false);
   const [price, setPrice] = useState(0);
+  const [userCurrentPrice, setUserCurrentPrice] = useState(0);
   const { productID } = useParams();
   const [depositData, setDepositData] = useState(null);
+  const [highestBid, setHighestBid] = useState(null);
 
   const auth = useSelector((state) => state.auth);
   const cookies = new Cookies();
@@ -22,14 +24,84 @@ function ProductDetail() {
   const isCustomer = ROLES.CUSTOMER === user.roles;
   // const customerID = isCustomer ? auth.user.sub.split(',')[0] : null;
 
-  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${isMakeDeposit ? '' : 'pointer-events-none opacity-50'
-    }`;
+  const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${
+    isMakeDeposit ? '' : 'pointer-events-none opacity-50'
+  }`;
 
   const handleMakeDepositClick = () => {
     setMakeDeposit(true);
     handleDepositSubmit();
+    setUserCurrentPrice(price);
+  };
+  useEffect(() => {
+    const apiUrl = `/products/${productID}`;
+    httpGet({ url: apiUrl })
+      .then((response) => {
+        setProduct(response.data);
+        setPrice(response.data.startingPrice);
+        const updatedDepositData = {
+          customerId: customerSellerID,
+          productId: productID,
+          depositAmount: response.data.deposit,
+        };
+        setDepositData(updatedDepositData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    checkDepositMade();
+  }, []);
+
+  const checkDepositMade = async () => {
+    const res = await httpGet({
+      url: `/deposits/${customerSellerID}`,
+    });
+    if (res.data.deposits) {
+      const hasMatchingDeposit = res.data.deposits.some(
+        (deposit) => deposit.productId == productID
+      );
+      if (hasMatchingDeposit) {
+        setMakeDeposit(true);
+      }
+    }
   };
 
+  useEffect(() => {
+    currentHighestBid();
+  }, [userCurrentPrice]);
+
+  const currentHighestBid = async () => {
+    const res = await httpGet({
+      url: `/bids/${productID}`,
+    });
+    setHighestBid(res.data.bidAmount);
+  };
+
+  useEffect(() => {
+    try {
+      const apiUrl = `/bids/by-product?productId=${productID}`;
+      httpGet({ url: apiUrl }).then((response) => {
+        const filteredBidByProduct = response.data.filter(
+          (item) => item.customerId == customerSellerID && item.product.productID == productID
+        );
+        if (filteredBidByProduct.length > 0) {
+          const highestBid = filteredBidByProduct.reduce((prev, current) => {
+            return prev.bidAmount > current.bidAmount ? prev : current;
+          });
+          setUserCurrentPrice(highestBid.bidAmount);
+        } else {
+          setUserCurrentPrice(price);
+        }
+      });
+    } catch (err) {
+      notifyError(`${err}`);
+    }
+  }, []);
 
   const handleDepositSubmit = async (e) => {
     try {
@@ -40,18 +112,17 @@ function ProductDetail() {
 
       notifySuccess('Deposit has been made, now you can start bidding');
     } catch (err) {
-      console.log('error', err);
       notifyError(`${err}`);
     }
   };
 
   const handlePriceClick = async (updateValue) => {
-    setPrice(price + updateValue);
+    setPrice(userCurrentPrice + updateValue);
 
     const bidData = {
       customerId: customerSellerID,
       productId: productID,
-      newBidAmount: price + updateValue
+      newBidAmount: userCurrentPrice + updateValue,
     };
 
     // Post method to create a bid
@@ -61,33 +132,12 @@ function ProductDetail() {
         data: bidData,
       });
 
-      notifySuccess('Bid created successfully')
+      notifySuccess('Bid created successfully');
+      setUserCurrentPrice(userCurrentPrice + updateValue);
     } catch (err) {
-      console.log('error', err);
-      notifyError(`${err}`)
+      notifyError(`${err}`);
     }
   };
-
-  useEffect(() => {
-    const apiUrl = `/products/${productID}`;
-
-    httpGet({ url: apiUrl }) 
-      .then((response) => {
-        setProduct(response.data);
-        setPrice(response.data.startingPrice);
-        const updatedDepositData = {
-          customerId: customerSellerID,
-          productId: productID,
-          depositAmount: response.data.deposit, 
-        };
-        setDepositData(updatedDepositData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <div>
@@ -117,8 +167,20 @@ function ProductDetail() {
               <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block flex justify-center items-center"></div>
               <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block flex justify-center items-center">
                 {' '}
+                {!product.sold && (
+                  <button
+                    className="bg-gray-400 text-white text-sm px-2 py-1 rounded cus-sold"
+                    disabled
+                  >
+                    Sold Out
+                  </button>
+                )}
                 <img
-                  src="https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg"
+                  src={
+                    product.productID % 2 === 0
+                      ? 'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg'
+                      : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC8mGVDYXVH1ugchnYSNvrDbYPYlLPzqX6jg&usqp=CAU'
+                  }
                   alt={product.name}
                   className="h-full w-full object-cover object-center"
                 />
@@ -138,7 +200,7 @@ function ProductDetail() {
                   Starting Bid Price: ${product.startingPrice}
                 </p>
                 <p className="text-2xl tracking-tight text-gray-900">
-                  Current Highest Bid Price: ${product.startingPrice}
+                  Current Highest Bid Price: ${highestBid}
                 </p>
                 {isMakeDeposit ? (
                   ''
@@ -162,8 +224,9 @@ function ProductDetail() {
                 {isMakeDeposit && (
                   <div className="mt-2">
                     <input
+                      disabled
                       type="number"
-                      value={price} // Bind the input value to the 'price' state
+                      value={userCurrentPrice}
                       onChange={(e) => setPrice(Number(e.target.value))}
                       name="bid-amount"
                       id="bid-amount"

@@ -6,12 +6,8 @@ import ProductList from '../components/product-list/ProductList';
 import ProductDetail from '../components/product/ProductDetail';
 import ProductAddEdit from '../components/product/ProductAddEdit';
 import DepositHistory from '../components/deposits/DepositHistory';
-<<<<<<< HEAD
 import ProductHistory from '../components/history/ProductHistory';
-
-=======
 import BidHistory from '../components/bid-history/BidHistory'
->>>>>>> main
 
 export default function PageRoutes() {
   return (

@@ -17,7 +17,7 @@ const navigation = [
     current: false,
     visibility: ['SELLER', 'CUSTOMER'],
   },
-  { name: 'History', href: '/history', current: false, visibility: ['SELLER', 'CUSTOMER'] },
+  { name: 'View Your Bid History', href: '/history', current: false, visibility: ['CUSTOMER'] },
   // { name: 'Sell Products', href: '/sell-products', current: false },
   { name: 'Add Product', href: '/product/add', current: false, visibility: ['SELLER'] },
 ];

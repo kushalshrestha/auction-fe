@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { httpGet } from '../../api';
 import { useSelector } from 'react-redux';
 import { ROLES } from './../../app/constants';
+import Cookies from 'universal-cookie';
 
 function ProductHistory() {
   const [productHistory, setProductHistory] = useState([]);
@@ -10,14 +11,15 @@ function ProductHistory() {
   const auth = useSelector((state) => state.auth);
   const user = auth.user || {};
   const isCustomer = ROLES.CUSTOMER === user.roles;
+  const cookies = new Cookies();
+  const customerSellerID = cookies.get('CUSTOMERSELLERID');
 
   useEffect(() => {
-    const apiUrl = '/bids/bid-history/1';
+    const apiUrl = `/bids/bid-history/${customerSellerID}`;
 
     httpGet({ url: apiUrl })
       .then((response) => {
         setProductHistory(response.data.productHistory);
-        console.log("This is history....", response.data.productHistory);
         setLoading(false);
       })
       .catch((error) => {
@@ -35,6 +37,9 @@ function ProductHistory() {
           <thead>
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                SN
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Product Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -46,9 +51,12 @@ function ProductHistory() {
             </tr> 
           </thead>
           <tbody>
-            {productHistory.map((product) => (
+            {productHistory.map((product, index) => (
 
-              <tr key={product.bidDate} className="bg-white">
+              <tr key={index} className="bg-white">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {index + 1}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {product.productName}
                 </td>

@@ -15,24 +15,17 @@ function BidHistory() {
     const user = auth.user || {};
     const isCustomer = ROLES.CUSTOMER === user.roles;
 
-    console.log('auth', auth);
-    console.log('ROLES.CUSTOMER', ROLES.CUSTOMER);
-    console.log('user.role', user.roles);
-    console.log('isCustomer', isCustomer);
-
     useEffect(() => {
         try {
             const apiUrl = `/bids/by-product?productId=${productID}`
             httpGet({ url: apiUrl })
                 .then((response) => {
-                    console.log(response.data);
                     setBids(response.data)
                     setLoading(false);
                     notifySuccess('Successfully displaying Bids');
                 })
 
         } catch (err) {
-            console.log('error', err);
             notifyError(`${err}`);
             setLoading(false);
         }

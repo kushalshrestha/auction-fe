@@ -61,6 +61,14 @@ input {
   padding-left: 10px;
 }
 
+.cus-sold{
+  position: relative;
+    z-index: 999;
+    left: -114px;
+    transform: rotate(-40deg);
+    bottom: -31px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: theme('colors.dark') !important;
