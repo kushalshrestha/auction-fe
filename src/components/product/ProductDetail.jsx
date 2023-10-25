@@ -4,6 +4,7 @@ import { notifySuccess, notifyError } from './../../helpers/notification';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ROLES } from './../../app/constants';
+import Cookies from 'universal-cookie';
 
 function ProductDetail() {
   const [product, setProduct] = useState(null);
@@ -11,15 +12,15 @@ function ProductDetail() {
   const [isMakeDeposit, setMakeDeposit] = useState(false);
   const [price, setPrice] = useState(0);
   const { productID } = useParams();
+  const [depositData, setDepositData] = useState(null);
 
   const auth = useSelector((state) => state.auth);
+  const cookies = new Cookies();
+  const customerSellerID = cookies.get('CUSTOMERSELLERID');
 
   const user = auth.user || {};
-  console.log(user);
   const isCustomer = ROLES.CUSTOMER === user.roles;
-  const customerID = isCustomer ? auth.user.sub.split(',')[0] : null;
-  console.log(auth.user.sub);
-  console.log(customerID);
+  // const customerID = isCustomer ? auth.user.sub.split(',')[0] : null;
 
   const btnPriceClassName = `rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${isMakeDeposit ? '' : 'pointer-events-none opacity-50'
     }`;
@@ -29,11 +30,6 @@ function ProductDetail() {
     handleDepositSubmit();
   };
 
-  const depositData = {
-    customerId: customerID,
-    productId: productID,
-    depositAmount: 12.0,
-  };
 
   const handleDepositSubmit = async (e) => {
     try {
@@ -50,11 +46,10 @@ function ProductDetail() {
   };
 
   const handlePriceClick = async (updateValue) => {
-    // Update the price with the provided value
     setPrice(price + updateValue);
 
     const bidData = {
-      customerId: customerID,
+      customerId: customerSellerID,
       productId: productID,
       newBidAmount: price + updateValue
     };
@@ -76,10 +71,16 @@ function ProductDetail() {
   useEffect(() => {
     const apiUrl = `/products/${productID}`;
 
-    httpGet({ url: apiUrl }) // Use httpGet to make the GET request
+    httpGet({ url: apiUrl }) 
       .then((response) => {
         setProduct(response.data);
         setPrice(response.data.startingPrice);
+        const updatedDepositData = {
+          customerId: customerSellerID,
+          productId: productID,
+          depositAmount: response.data.deposit, 
+        };
+        setDepositData(updatedDepositData);
         setLoading(false);
       })
       .catch((error) => {

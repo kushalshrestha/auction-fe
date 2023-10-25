@@ -26,9 +26,7 @@ function SignIn() {
   };
 
   const handleSignInSubmit = async (e) => {
-    console.log('submitted data', formData);
     e.preventDefault();
-    // You can handle sign-in logic here, e.g., make an API request.
     try {
       let authResponse = await httpPost({
         url: '/auth/login',
@@ -42,17 +40,17 @@ function SignIn() {
     }
   };
 
-  const handleSuccessfulLogin = (data) => {
+  const handleSuccessfulLogin = async (data) => {
     const cookies = new Cookies();
-    console.log('data', data);
+    const customerSellerId = data.roleCustomerSellerId;
     const { accessToken } = data || {};
     const jwt = jwtDecode(accessToken);
-    console.log('jwt', jwt);
     cookies.set(ACCESS_TOKEN, accessToken, {
       path: '/',
       expires: new Date(jwt.exp * 1000),
     });
-    dispatch(signIn({ ...jwt, email: jwt.sub }));
+    cookies.set('CUSTOMERSELLERID', customerSellerId)
+    dispatch(signIn({ ...jwt, email: jwt.sub, customerSellerId }));
     notifySuccess('Successfully signed in!!');
     navigate('/', { replace: true });
   };
