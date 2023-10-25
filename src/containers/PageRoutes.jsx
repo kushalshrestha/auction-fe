@@ -6,7 +6,12 @@ import ProductList from '../components/product-list/ProductList';
 import ProductDetail from '../components/product/ProductDetail';
 import ProductAddEdit from '../components/product/ProductAddEdit';
 import DepositHistory from '../components/deposits/DepositHistory';
+<<<<<<< HEAD
+import ProductHistory from '../components/history/ProductHistory';
+
+=======
 import BidHistory from '../components/bid-history/BidHistory'
+>>>>>>> main
 
 export default function PageRoutes() {
   return (
@@ -20,6 +25,7 @@ export default function PageRoutes() {
       <Route path="/test" element={<TestPage />} />
       <Route path="/product/add" element={<ProductAddEdit />} />
       <Route path="/deposits" element={<DepositHistory />} />
+      <Route path="/history" element={<ProductHistory />} />
       <Route path="*" element={<h1>404 Not Found</h1>} />
     </Routes>
   );
