@@ -6,6 +6,7 @@ import ProductList from '../components/product-list/ProductList';
 import ProductDetail from '../components/product/ProductDetail';
 import ProductAddEdit from '../components/product/ProductAddEdit';
 import DepositHistory from '../components/deposits/DepositHistory';
+import BidHistory from '../components/bid-history/BidHistory'
 
 export default function PageRoutes() {
   return (
@@ -13,6 +14,7 @@ export default function PageRoutes() {
       <Route path="/" element={<h1>Home Page</h1>} />
       <Route path="/products" element={<ProductList />} />
       <Route path="/product-detail/:productID" element={<ProductDetail />} />
+      <Route path="/bid-history/:productID" element={<BidHistory />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-up" element={<SignUp />} />
       <Route path="/test" element={<TestPage />} />
