@@ -33,7 +33,7 @@ const ProductList = () => {
       setIsFiltering(false);
     } else {
       const filtered = products.filter((product) => {
-        return product.seller.sellerID === sellerID;
+        return product.seller.sellerID == sellerID;
       });
       setProducts(filtered);
       setIsFiltering(true);
