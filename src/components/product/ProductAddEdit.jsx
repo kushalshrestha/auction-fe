@@ -2,10 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { httpPost, httpGet } from '../../api';
 import { Link } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 import { notifyError, notifySuccess } from './../../helpers/notification';
 
 function ProductAddEdit() {
+  const cookies = new Cookies();
+  const customerSellerID = cookies.get('CUSTOMERSELLERID');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -14,7 +17,7 @@ function ProductAddEdit() {
     bidDueDate: '',
     biddingPaymentDueDate: '',
     released: false,
-    sellerID: 1,
+    sellerID: customerSellerID,
   });
 
   const navigate = useNavigate();
