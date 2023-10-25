@@ -1,72 +1,19 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { httpGet } from './../../api';
-
-// const products = [
-//   {
-//     id: 1,
-//     name: "Samuel's Oil Painting",
-//     href: '/product-detail',
-//     imageSrc:
-//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-//     imageAlt: 'Oil Painting',
-//     description:
-//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-//     bidDueDate: '29th Jan 2024',
-//     biddingPaymentDueDate: '2nd Feb 2024',
-//     release: 'No',
-//     startingPrice: '$50',
-//     seller: 'Samuel',
-//   },
-//   {
-//     id: 2,
-//     name: "Samuel's Oil Painting",
-//     href: '/',
-//     imageSrc:
-//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-//     imageAlt: 'Oil Painting',
-//     description:
-//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-//     bidDueDate: '29th Jan 2024',
-//     biddingPaymentDueDate: '2nd Feb 2024',
-//     release: 'No',
-//     startingPrice: '$50',
-//     seller: 'Samuel',
-//   },
-//   {
-//     id: 3,
-//     name: "Samuel's Oil Painting",
-//     href: '/',
-//     imageSrc:
-//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-//     imageAlt: 'Oil Painting',
-//     description:
-//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-//     bidDueDate: '29th Jan 2024',
-//     biddingPaymentDueDate: '2nd Feb 2024',
-//     release: 'No',
-//     startingPrice: '$50',
-//     seller: 'Samuel',
-//   },
-//   {
-//     id: 4,
-//     name: "Samuel's Oil Painting",
-//     href: '/',
-//     imageSrc:
-//       'https://samuelearp.com/wp-content/uploads/2023/06/Still-Life-Pineapples-Bananas-and-Apples-Samuel-Earp-oil-painting.jpeg',
-//     imageAlt: 'Oil Painting',
-//     description:
-//       'This is one of my best painting. Had to sell this because really in need of money right now.This is one of my best painting. Had to sell this because really in need of money right now.',
-//     bidDueDate: '29th Jan 2024',
-//     biddingPaymentDueDate: '2nd Feb 2024',
-//     release: 'No',
-//     startingPrice: '$50',
-//     seller: 'Samuel',
-//   },
-// ];
+import { HiFilter } from 'react-icons/hi';
+import { useSelector } from 'react-redux';
+import { ROLES } from './../../app/constants';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+
+  const auth = useSelector((state) => state.auth);
+  const user = auth.user || {};
+  const isCustomer = ROLES.CUSTOMER === user.roles;
+  const isSeller = ROLES.SELLER === user.roles;
+  const sellerID = isSeller ? auth.user.sub.split(',')[0] : null;
+  const [isFiltering, setIsFiltering] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -80,21 +27,35 @@ const ProductList = () => {
     console.log(products);
   };
 
+  const handleFilterClick = () => {
+    if (isFiltering) {
+      loadProducts();
+      setIsFiltering(false);
+    } else {
+      const filtered = products.filter((product) => {
+        return product.seller.sellerID === sellerID;
+      });
+      setProducts(filtered);
+      setIsFiltering(true);
+    }
+  };
+
   return (
     <div className="bg-white z-0">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-bold tracking-tight text-gray-900">Products in Auction</h2>
-        <button
-          href="/product/add"
-          type="button"
-          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        >
-          Add a Product
-        </button>
+        {isSeller && (
+          <button
+            onClick={handleFilterClick}
+            className="text-gray-600 hover:text-gray-800 focus:outline-none text-xs flex items-center"
+          >
+            <HiFilter className="h-4 w-4 mr-1" />
+            {isFiltering ? 'Remove Filter' : 'Filter only your Products'}
+          </button>
+        )}
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
             <div key={product.productID}>
-              {/* <Link to={product.href}> */}
               <Link to={`/product-detail/${product.productID}`}>
                 <span className="sr-only">Your Company</span>
                 <div className="group relative">

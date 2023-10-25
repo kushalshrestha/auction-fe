@@ -11,16 +11,10 @@ function DepositHistory() {
   const user = auth.user || {};
   const isCustomer = ROLES.CUSTOMER === user.roles;
 
-  console.log('auth', auth);
-  console.log('ROLES.CUSTOMER', ROLES.CUSTOMER);
-  console.log('user.role', user.roles);
-  console.log('isCustomer', isCustomer);
-
   useEffect(() => {
-    // Replace 'https://api.example.com/deposits/2' with the actual URL to fetch deposit data.
     const apiUrl = '/deposits/2';
 
-    httpGet({ url: apiUrl }) // Use httpGet to make the GET request
+    httpGet({ url: apiUrl })
       .then((response) => {
         setDeposits(response.data.deposits);
         setLoading(false);
