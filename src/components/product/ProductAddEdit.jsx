@@ -17,7 +17,7 @@ function ProductAddEdit() {
     bidDueDate: '',
     biddingPaymentDueDate: '',
     released: false,
-    sellerID: customerSellerID,
+    sellerID: 1,
   });
 
   const navigate = useNavigate();
