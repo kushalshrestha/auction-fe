@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { httpGet, httpPost } from '../../api';
 import { notifySuccess, notifyError } from './../../helpers/notification';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ROLES } from './../../app/constants';
 
@@ -151,12 +151,12 @@ function ProductDetail() {
                   </button>
                 )}
                 {isMakeDeposit && (
-                  <a
-                    href="#"
+                  <Link
+                    to={`/bid-history/${productID}`}
                     className="ml-1 text-sm font-medium text-indigo-600 hover:text-indigo-500"
                   >
                     View Bidding History
-                  </a>
+                  </Link>
                 )}
                 {isMakeDeposit && (
                   <div className="mt-2">
